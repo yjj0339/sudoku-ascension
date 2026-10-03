@@ -287,6 +287,29 @@ await evl(`SK.Settings.set('theme','aurora'); SK.Menus.go('title'); SK.Menus.ren
 await sleep(300);
 await shot('13-title-after');
 
+console.log('== M. 每一屏都不越界（title/levels/play/result） ==');
+const EDGE = `(function(){
+  var vw=document.documentElement.clientWidth, cur=null;
+  document.querySelectorAll('.screen').forEach(function(e){ if (getComputedStyle(e).display!=='none') cur=e; });
+  if(!cur) return {err:'no screen'};
+  var bad=[];
+  cur.querySelectorAll('*').forEach(function(e){
+    var r=e.getBoundingClientRect(); if(!r.width) return;
+    var p=e, scroll=false;
+    while (p && p!==cur) { var ox=getComputedStyle(p).overflowX; if (ox==='auto'||ox==='scroll'||ox==='hidden') { scroll=true; break; } p=p.parentElement; }
+    if (scroll) return;
+    if (r.right > vw + 1 || r.left < -2) bad.push(((e.className&&typeof e.className==='string')?e.className.split(' ')[0]:e.tagName)+'@'+Math.round(r.left)+'-'+Math.round(r.right));
+  });
+  return { id:cur.id, sw:cur.scrollWidth, cw:cur.clientWidth, n:bad.length, sample:bad.slice(0,4) };
+})()`;
+for (const [scr, prep] of [['title', 'SK.Menus.renderTitle()'], ['levels', 'SK.Menus.renderLevels()'], ['play', 'SK.Game.load(3); SK.UI.renderAll()'], ['result', 'SK.Menus.showResult({level:3,time:120,score:900,stars:3,mistakes:0,hints:0,aiSteps:0,clues:33,grade:"普通",chapter:"初学者的问候",par:100,pure:true})']]) {
+  await evl(`SK.Menus.go('${scr}'); ${prep}`);
+  await sleep(520);
+  const r = await evl(EDGE);
+  ok(`屏幕 ${scr} 内容不越出视口`, r.sw <= r.cw + 1 && r.n === 0, JSON.stringify(r));
+}
+await evl(`SK.Menus.go('title')`); await sleep(300); await shot('14-title-fixed');
+
 console.log('\n运行期异常：' + (errors.length ? '\n  ' + errors.slice(0, 8).join('\n  ') : '无'));
 ok('全程无 JS 异常', errors.length === 0, errors.length + ' 条');
 console.log(fails ? '\n❌ 浏览器闸门失败 ' + fails + ' 项' : '\n✅ 浏览器闸门全绿');

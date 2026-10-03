@@ -151,7 +151,7 @@
       const rowEl = el('div', 'ladder-row');
       const dn = SK.Progress.chapterDone(c.id);
       rowEl.innerHTML =
-        '<div class="lr-ico"><svg class="ic"><use href="#' + c.icon + '"></use></svg></div>' +
+        '<div class="lr-ico"><span class="lr-num">' + '一二三四五六七八九十'.charAt(c.id - 1) + '</span></div>' +
         '<div><div class="ladder-name"><b>' + c.name + '</b><span>' + dn + '/10</span></div>' +
         '<div class="ladder-bar"><i style="width:' + (dn * 10) + '%"></i></div></div>' +
         '<div class="muted" style="text-align:right">Lv ' + (c.id * 10 - 9) + '-' + (c.id * 10) + '</div>';
@@ -237,7 +237,7 @@
     SK.Levels.CHAPTERS.forEach(c => {
       const chip = el('button', 'rail-chip' + (M.filter.chapter === c.id ? ' on' : ''));
       const dn = SK.Progress.chapterDone(c.id);
-      chip.innerHTML = '<svg class="ic"><use href="#' + c.icon + '"></use></svg><b>第' + '一二三四五六七八九十'.charAt(c.id - 1) + '章</b>' + c.name + ' · ' + dn + '/10';
+      chip.innerHTML = '<span class="lr-num">' + '一二三四五六七八九十'.charAt(c.id - 1) + '</span> <b>第' + '一二三四五六七八九十'.charAt(c.id - 1) + '章</b>' + c.name + ' · ' + dn + '/10';
       chip.addEventListener('click', () => M.showChapter(c.id, true));
       rail.appendChild(chip);
     });
@@ -247,7 +247,7 @@
       const g = el('div', 'cgroup' + (M.filter.chapter === c.id ? ' open' : ''));
       const dn = SK.Progress.chapterDone(c.id);
       const head = el('div', 'cgroup-head');
-      head.innerHTML = '<div class="cg-ico"><svg class="ic"><use href="#' + c.icon + '"></use></svg></div><div><b></b><small></small></div>' +
+      head.innerHTML = '<div class="cg-ico"><span class="lr-num">' + '一二三四五六七八九十'.charAt(c.id - 1) + '</span></div><div><b></b><small></small></div>' +
         '<span class="cg-state">' + dn + '/10</span><span class="cg-arrow">›</span>';
       head.querySelector('b').textContent = '第' + '一二三四五六七八九十'.charAt(c.id - 1) + '章 · ' + c.name;
       head.querySelector('small').textContent = c.sub + ' · Lv ' + (c.id * 10 - 9) + '-' + (c.id * 10);
