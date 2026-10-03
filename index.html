@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="aurora">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>数独 · 天阶 SUDOKU ASCENSION</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/glass.css">
+</head>
+
+<body data-screen="title">
+
+  <!-- 描边图标精灵（stroke=currentColor，统一 1.7 线宽） -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="i-grid"><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17" /></g>
+    <g id="i-gem"><path d="M6 3h12l3 6-9 12L3 9z" /><path d="M3 9h18M9 3l-3 6 6 12 6-12-3-6" /></g>
+    <g id="i-chart"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></g>
+    <g id="i-gear"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" /></g>
+    <g id="i-ai"><rect x="3.5" y="7" width="17" height="13" rx="4" /><circle cx="9" cy="13" r="1.3" /><circle cx="15" cy="13" r="1.3" /><path d="M12 7V3.6M9.5 3.6h5M2 12v3M22 12v3" /></g>
+    <g id="i-undo"><path d="M4 9h11a5 5 0 0 1 0 10H8" /><path d="M8 5L4 9l4 4" /></g>
+    <g id="i-redo"><path d="M20 9H9a5 5 0 0 0 0 10h7" /><path d="M16 5l4 4-4 4" /></g>
+    <g id="i-erase"><path d="M8 20h12" /><path d="M15.5 4.5l4 4L9 19H5l-1-3z" /><path d="M11 9l4 4" /></g>
+    <g id="i-pencil"><path d="M4 20h4L20 8l-4-4L4 16z" /><path d="M14.5 5.5l4 4" /></g>
+    <g id="i-bulb"><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.8V16h7v-2.2A6 6 0 0 0 12 3z" /></g>
+    <g id="i-play"><path d="M7 4.5l12 7.5-12 7.5z" /></g>
+    <g id="i-pause"><path d="M9 4.5v15M15 4.5v15" /></g>
+    <g id="i-close"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13" /></g>
+    <g id="i-chev-left"><path d="M15 4.5L7.5 12l7.5 7.5" /></g>
+    <g id="i-chev-right"><path d="M9 4.5l7.5 7.5L9 19.5" /></g>
+    <g id="i-check"><path d="M4.5 12.5l5 5 10-11" /></g>
+    <g id="i-lock"><rect x="4.5" y="10" width="15" height="10.5" rx="2.5" /><path d="M8 10V7.5a4 4 0 0 1 8 0V10" /></g>
+    <g id="i-star"><path d="M12 3.2l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.7l6.1-.9z" /></g>
+    <g id="i-filter"><path d="M4 7h16M4 12h16M4 17h16" /><circle cx="9" cy="7" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="8" cy="17" r="2" /></g>
+    <g id="i-book"><path d="M4 4.5h6a2.5 2.5 0 0 1 2.5 2.5v12A2 2 0 0 0 11 17H4z" /><path d="M20 4.5h-6a2.5 2.5 0 0 0-2.5 2.5v12A2 2 0 0 1 13 17h7z" /></g>
+    <g id="i-target"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r=".8" /></g>
+    <g id="i-zap"><path d="M13.5 2.5L5 13.5h5l-1.5 8L19 10.5h-5.5z" /></g>
+    <g id="i-moon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" /></g>
+    <g id="i-crown"><path d="M3 17.5h18M4 17l-1-9 5.5 4L12 5l3.5 7L21 8l-1 9z" /></g>
+    <g id="i-sprout"><path d="M12 20v-7" /><path d="M12 13c0-3-2.2-5-5.5-5C6.5 11 8.5 13 12 13z" /><path d="M12 13c0-3.6 2.4-6 6-6 0 3.6-2.4 6-6 6z" /></g>
+    <g id="i-cloud"><path d="M7 18h10a4 4 0 0 0 .6-8 5.5 5.5 0 0 0-10.4 1.4A3.3 3.3 0 0 0 7 18z" /></g>
+    <g id="i-puzzle"><path d="M10 4.5a2 2 0 0 1 4 0V6h3.5v3.5h1.5a2 2 0 0 1 0 4H17.5V17H14v1.5a2 2 0 0 1-4 0V17H6.5v-3.5H5a2 2 0 0 1 0-4h1.5V6H10z" /></g>
+    <g id="i-link"><path d="M9.5 14.5l5-5" /><path d="M12 7.5l2-2a3.5 3.5 0 0 1 5 5l-2 2" /><path d="M12 16.5l-2 2a3.5 3.5 0 0 1-5-5l2-2" /></g>
+    <g id="i-shapes"><circle cx="7.5" cy="7.5" r="4" /><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.5" /><path d="M8 20.5l-4.5.5 4.5-7 4.5 7z" /><path d="M14 21h7l-3.5-6z" /></g>
+    <g id="i-fish"><path d="M3.5 12c3.5-5 9-6.5 13.5-4.5.5-1 2-2 3.5-2-.5 1.5-.5 3 0 4.5.5 1.5.5 3 0 4.5-1.5 0-3-1-3.5-2-4.5 2-10 .5-13.5-4.5z" /><circle cx="16" cy="10.8" r=".8" /></g>
+    <g id="i-branch"><circle cx="6.5" cy="5.5" r="2.5" /><circle cx="6.5" cy="18.5" r="2.5" /><circle cx="17.5" cy="12" r="2.5" /><path d="M6.5 8v8M9 6.5h4a4 4 0 0 1 4 4v1M9 17.5h4a4 4 0 0 0 4-4v-1" /></g>
+    <g id="i-clock"><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5.5l3.5 2" /></g>
+    <g id="i-alert"><path d="M12 3.5l9 16H3z" /><path d="M12 9.5v4.5M12 17h.01" /></g>
+    <g id="i-sun"><circle cx="12" cy="12" r="4" /><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" /></g>
+    <g id="i-layers"><path d="M12 3l8.5 4.5L12 12 3.5 7.5z" /><path d="M3.5 12.5L12 17l8.5-4.5" /><path d="M3.5 17L12 21.5l8.5-4.5" /></g>
+    <g id="i-trophy"><path d="M8 4h8v5a4 4 0 0 1-8 0z" /><path d="M8 5.5H5.5A2.5 2.5 0 0 0 8 9M16 5.5h2.5A2.5 2.5 0 0 1 16 9" /><path d="M12 13v4M9 20h6M10 17h4" /></g>
+    <g id="i-home"><path d="M4 10.5L12 4l8 6.5V20H4z" /><path d="M9.5 20v-6h5v6" /></g>
+    <g id="i-flag"><path d="M6 3v18" /><path d="M6 4.5h11l-2 4 2 4H6z" /></g>
+    <g id="i-sliders"><path d="M6 3v6M6 15v6M12 3v10M12 19v2M18 3v3M18 12v9" /><circle cx="6" cy="12" r="2.2" /><circle cx="12" cy="16" r="2.2" /><circle cx="18" cy="9" r="2.2" /></g>
+    <g id="i-bell"><path d="M7 10a5 5 0 0 1 10 0c0 5 2 6 2 6H5s2-1 2-6z" /><path d="M10.5 19a1.8 1.8 0 0 0 3 0" /></g>
+  </defs></svg>
+
+
+  <!-- 背景：极光光斑 + 网格 + 跟随光源 -->
+  <div class="stage-bg" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="mesh"></div>
+    <div class="spot" id="spot"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <!-- ============ 主菜单 ============ -->
+  <main class="screen screen-title" id="screen-title">
+    <header class="brand">
+      <div class="brand-mark" id="brand-mark">
+        <i></i><i></i><i></i><i></i><b><svg class="ic"><use href="#i-grid"></use></svg></b><i></i><i></i><i></i><i></i>
+      </div>
+      <h1 class="brand-name">数独 <em>·</em> 天阶</h1>
+      <p class="brand-sub">SUDOKU ASCENSION · 100 关渐进 · AI 大师陪跑</p>
+    </header>
+
+    <section class="card hero-card glass">
+      <div class="hero-ring">
+        <svg viewBox="0 0 120 120" class="ring-svg">
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          <circle class="ring-fill" id="hero-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="327"></circle>
+        </svg>
+        <div class="ring-center"><b id="hero-done">0</b><span>/ 100 关</span></div>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-line"><span>当前进度</span><b id="hero-chapter">第一章 · 初学者的问候</b></div>
+        <div class="hero-line"><span>累计时长</span><b id="hero-time">0:00</b></div>
+        <div class="hero-line"><span>AI 使用度</span><b id="hero-ai">0 次</b></div>
+      </div>
+      <button class="btn btn-hero" id="btn-continue"><span class="btn-glow"></span><em>继续闯关</em><small id="btn-continue-sub">第 1 关 · 初学者的问候</small></button>
+      <div class="hero-actions">
+        <button class="btn btn-ghost" data-nav="levels"><svg class="ic"><use href="#i-grid"></use></svg>关卡</button>
+        <button class="btn btn-ghost" data-nav="codex"><svg class="ic"><use href="#i-book"></use></svg>技巧图鉴</button>
+        <button class="btn btn-ghost" data-nav="stats"><svg class="ic"><use href="#i-chart"></use></svg>生涯</button>
+        <button class="btn btn-ghost" data-sheet="sheet-settings"><svg class="ic"><use href="#i-sliders"></use></svg>设置</button>
+      </div>
+    </section>
+
+    <section class="card glass slim">
+      <div class="card-head"><h2>难度阶梯</h2><span class="muted">10 章 · 由浅入极深</span></div>
+      <div class="ladder" id="title-ladder"></div>
+    </section>
+
+    <section class="card glass slim ai-intro">
+      <div class="card-head"><h2>AI 大师</h2><span class="tag tag-ai">在线</span></div>
+      <p class="card-p">它会看你真实的盘面说话：给方向、教技巧、讲推理链，也可以直接接手把这一关替你做掉。六级提示，从「只指一眼」到「全程代打」，你随时决定让多少。</p>
+      <div class="chip-row" id="ai-tier-chips"></div>
+    </section>
+  </main>
+
+  <!-- ============ 关卡选择 ============ -->
+  <main class="screen screen-levels" id="screen-levels">
+    <header class="appbar glass">
+      <button class="icon-btn" data-nav="title" aria-label="返回"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="appbar-title"><b>关卡总览</b><small id="levels-summary">0 / 100 已通关</small></div>
+      <button class="icon-btn" data-sheet="sheet-filter" aria-label="筛选"><svg class="ic"><use href="#i-filter"></use></svg></button>
+    </header>
+    <nav class="chapter-rail" id="chapter-rail"></nav>
+    <div class="levels-scroll" id="chapter-groups"></div>
+  </main>
+
+  <!-- ============ 对局 ============ -->
+  <main class="screen screen-play" id="screen-play">
+    <header class="hud glass">
+      <button class="icon-btn hud-back" data-nav="levels" aria-label="关卡"><svg class="ic"><use href="#i-grid"></use></svg></button>
+      <div class="hud-level">
+        <b id="hud-num">Lv 1</b>
+        <small id="hud-chapter">初学者的问候</small>
+      </div>
+      <div class="hud-mid">
+        <div class="hud-diff" id="hud-diff"><i></i><i></i><i></i><i></i><i></i></div>
+        <small id="hud-grade">入门</small>
+      </div>
+      <div class="hud-right">
+        <div class="hud-timer" id="hud-timer">0:00</div>
+        <small id="hud-mistake">错 0</small>
+      </div>
+      <button class="icon-btn" data-sheet="sheet-settings" aria-label="设置"><svg class="ic"><use href="#i-sliders"></use></svg></button>
+      <div class="hud-progress"><i id="hud-progress-fill"></i></div>
+    </header>
+
+    <div class="ai-strip glass" id="ai-strip" role="status" aria-live="polite">
+      <span class="strip-ico"><svg class="ic"><use href="#i-ai"></use></svg></span><span id="ai-strip-text">AI 大师待命 · 点右侧随时问一句</span>
+      <button class="strip-btn" id="ai-strip-btn">问 AI</button>
+    </div>
+
+    <div class="board-zone" id="board-zone">
+      <div class="board-halo" aria-hidden="true"></div>
+      <div class="board-frame glass">
+        <div class="board" id="board" role="grid" aria-label="数独棋盘"></div>
+        <div class="board-sheen" aria-hidden="true"></div>
+      </div>
+      <div class="board-flash" id="board-flash" aria-hidden="true"></div>
+    </div>
+
+    <div class="toolstrip glass" id="toolstrip"></div>
+
+    <div class="numpad glass" id="numpad"></div>
+
+    <nav class="tabbar glass" id="tabbar"></nav>
+  </main>
+
+  <!-- ============ 结算 ============ -->
+  <main class="screen screen-result" id="screen-result">
+    <div class="result-card glass">
+      <div class="result-badge" id="result-badge">通关</div>
+      <div class="stars" id="result-stars"><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg><svg class="ic"><use href="#i-star"></use></svg></div>
+      <h2 id="result-title">第 1 关 完成</h2>
+      <div class="result-grid" id="result-grid"></div>
+      <div class="result-ai" id="result-ai"></div>
+      <div class="result-actions">
+        <button class="btn btn-hero" id="btn-next"><span class="btn-glow"></span><em>下一关</em></button>
+        <button class="btn btn-ghost" id="btn-replay">重玩本关</button>
+        <button class="btn btn-ghost" data-nav="levels">关卡表</button>
+        <button class="btn btn-ghost" id="btn-review">回看解法</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ 抽屉：AI 大师 ============ -->
+  <div class="scrim" id="scrim"></div>
+  <section class="glass sheet sheet-ai" id="sheet-ai" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>AI 大师</b><small id="sheet-ai-sub">六级提示 · 实时分析</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-tabs" id="ai-tabs"></div>
+    <div class="sheet-body">
+      <div class="pane" data-pane="hint">
+        <div class="tier-list" id="ai-tier-list"></div>
+        <div class="hint-result" id="ai-hint-result">
+          <div class="hint-empty">选一个提示等级，AI 会按你的当前盘面给答案。</div>
+        </div>
+      </div>
+      <div class="pane" data-pane="analyze" hidden></div>
+      <div class="pane" data-pane="play" hidden></div>
+      <div class="pane" data-pane="log" hidden></div>
+    </div>
+  </section>
+
+  <!-- ============ 抽屉：工具 ============ -->
+  <section class="glass sheet sheet-tools" id="sheet-tools" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>盘面工具</b><small>笔记 · 撤销 · 校验</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="tools-body"></div>
+  </section>
+
+  <!-- ============ 抽屉：设置（多级折叠） ============ -->
+  <section class="glass sheet sheet-settings" id="sheet-settings" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>设置</b><small id="settings-sub">手感 · 视觉 · 辅助</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="settings-body"></div>
+  </section>
+
+  <!-- ============ 抽屉：技巧图鉴 ============ -->
+  <section class="glass sheet sheet-codex" id="sheet-codex" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>技巧图鉴</b><small>从唯一候选到试位法</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="codex-body"></div>
+  </section>
+
+  <!-- ============ 抽屉：生涯统计 ============ -->
+  <section class="glass sheet sheet-stats" id="sheet-stats" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>生涯</b><small>进度 · 徽章 · 弱项</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="stats-body"></div>
+  </section>
+
+  <!-- ============ 抽屉：筛选（二级样例） ============ -->
+  <section class="glass sheet sheet-filter" id="sheet-filter" data-level="1">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回上一层"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b>筛选关卡</b><small>按状态 / 难度</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="filter-body"></div>
+  </section>
+
+  <!-- ============ 关卡详情（三级弹层） ============ -->
+  <section class="glass sheet sheet-cell" id="sheet-level-detail" data-level="2">
+    <header class="sheet-bar">
+      <button class="icon-btn sheet-back" aria-label="返回"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b id="ld-title">第 1 关</b><small id="ld-sub">初学者的问候</small></div>
+      <button class="icon-btn sheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="sheet-body" id="ld-body"></div>
+  </section>
+
+  <!-- 二级浮层：通用子菜单（主题选择、音效选择等） -->
+  <section class="glass subsheet" id="subsheet">
+    <header class="sheet-bar">
+      <button class="icon-btn subsheet-back" aria-label="返回"><svg class="ic"><use href="#i-chev-left"></use></svg></button>
+      <div class="sheet-title"><b id="subsheet-title">选择</b><small id="subsheet-sub"></small></div>
+      <button class="icon-btn subsheet-close" aria-label="关闭"><svg class="ic"><use href="#i-close"></use></svg></button>
+    </header>
+    <div class="subsheet-body" id="subsheet-body"></div>
+  </section>
+
+  <!-- 桌面副驾面板（≥1100px 才显示，宽屏不再留大片空白） -->
+  <aside class="desk-rail" id="desk-rail" aria-label="桌面副驾">
+    <section class="card glass slim">
+      <div class="card-head"><h2>AI 实时洞察</h2><span class="tag tag-ai" id="rail-grade">—</span></div>
+      <div class="verdict" id="rail-verdict"><h5>判断</h5><span id="rail-verdict-text">开局后 AI 会一直读盘。</span></div>
+      <ul class="advice" id="rail-advice"></ul>
+    </section>
+    <section class="card glass slim">
+      <div class="card-head"><h2>直接问 AI</h2><span class="muted">点一下就用</span></div>
+      <div class="rail-tiers" id="rail-tiers"></div>
+    </section>
+    <section class="card glass slim">
+      <div class="card-head"><h2 id="rail-chapter-title">本章进度</h2><span class="muted" id="rail-chapter-done">0/10</span></div>
+      <div class="lvl-grid rail-grid" id="rail-levels"></div>
+    </section>
+    <section class="card glass slim">
+      <div class="card-head"><h2>这一关怎么解</h2><span class="muted" id="rail-diff">—</span></div>
+      <div class="chip-row" id="rail-counts"></div>
+    </section>
+    <section class="card glass slim">
+      <div class="card-head"><h2>AI 介入记录</h2><span class="muted">本关</span></div>
+      <div id="rail-log" class="rail-log"></div>
+    </section>
+  </aside>
+
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+  <div class="modal" id="modal">
+    <div class="modal-card glass">
+      <h3 id="modal-title">确认</h3>
+      <p id="modal-text">确定吗？</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modal-cancel">取消</button>
+        <button class="btn btn-danger" id="modal-ok">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="loading-card glass">
+      <div class="loader"><i></i><i></i><i></i></div>
+      <b id="loading-title">AI 正在出题</b>
+      <small id="loading-sub">生成唯一解盘面并校准难度…</small>
+    </div>
+  </div>
+
+  <script src="js/core.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/tech.js"></script>
+  <script src="js/solver.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/menus.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

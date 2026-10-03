@@ -1,0 +1,180 @@
+/* ============================================================
+   数独·天阶 — 设计层 v2「瓷白 · 单色强调」
+   tokens / 纸面背景 / 玻璃瓷面 / 描边图标 / 光影层次
+   ============================================================ */
+
+:root {
+  /* 墨色与纸色 */
+  --ink: #1b1730;
+  --ink-2: #4c4666;
+  --ink-3: #7a7396;
+  --ink-4: #a49dba;
+  --paper: #f5f4fa;
+  --paper-2: #efeef7;
+  --surface: rgba(255, 255, 255, .93);
+  --surface-2: rgba(255, 255, 255, .78);
+  --surface-3: rgba(255, 255, 255, .62);
+  --hair: rgba(40, 32, 78, .10);
+  --hair-2: rgba(40, 32, 78, .16);
+  --grid-line: rgba(40, 32, 78, .045);
+
+  /* 唯一品牌色 + 语义色 */
+  --accent: #4a3af2;
+  --accent-2: #7b5cff;
+  --accent-3: #2ec9c0;
+  --accent-ink: #3b2bd6;
+  --accent-soft: rgba(74, 58, 242, .08);
+  --accent-line: rgba(74, 58, 242, .26);
+  --accent-glow: rgba(74, 58, 242, .30);
+  --good: #10a37a; --good-ink: #0b7a5c; --good-line: rgba(16, 163, 122, .28); --good-soft: rgba(16, 163, 122, .10); --good-glow: rgba(16, 163, 122, .4);
+  --warn: #c2710c; --warn-ink: #94550a; --warn-line: rgba(194, 113, 12, .3); --warn-soft: rgba(194, 113, 12, .10);
+  --danger: #d43a55; --danger-line: rgba(212, 58, 85, .3); --danger-soft: rgba(212, 58, 85, .09);
+  --tip-line: rgba(46, 201, 192, .55); --tip-glow: rgba(46, 201, 192, .34); --tip-ink: #0f8f88;
+  --star: #f0a32a; --star-glow: rgba(240, 163, 42, .55);
+
+  /* 版式 */
+  --f-xs: 9.5px; --f-sm: 11px; --f-md: 12.5px; --f-lg: 15px; --f-xl: 22px;
+  --track-tight: -.02em; --track-wide: .1em;
+  --label: var(--f-xs);
+
+  /* 圆角与投影（统一高度体系） */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 26px;
+  --sh-1: 0 1px 2px rgba(28, 22, 58, .06), 0 10px 26px -18px rgba(28, 22, 58, .30);
+  --sh-2: 0 1px 2px rgba(28, 22, 58, .05), 0 6px 16px -12px rgba(28, 22, 58, .26);
+  --sh-3: 0 2px 4px rgba(28, 22, 58, .05), 0 22px 48px -26px rgba(28, 22, 58, .38);
+  --sh-4: 0 -2px 4px rgba(28, 22, 58, .04), 0 -22px 52px -26px rgba(28, 22, 58, .34);
+  --inner-top: inset 0 1px 0 rgba(255, 255, 255, .95);
+  --inner-hair: inset 0 0 0 1px rgba(40, 32, 78, .07);
+
+  /* 兼容旧类名 */
+  --chip: var(--surface-3);
+  --row-bg: var(--surface);
+  --track: rgba(40, 32, 78, .10);
+  --panel: var(--surface);
+  --panel-2: var(--surface-2);
+  --node-bg: var(--surface);
+  --node-done: rgba(16, 163, 122, .10);
+  --btn-bg: var(--surface);
+  --grabber: rgba(40, 32, 78, .16);
+  --scrim: rgba(24, 18, 48, .30);
+  --scrim-strong: rgba(245, 244, 250, .82);
+  --tier-bg: linear-gradient(140deg, rgba(74, 58, 242, .10), rgba(46, 201, 192, .10));
+  --tier-ink: var(--accent-ink);
+  --bg-deep: var(--paper);
+  --line-faint: var(--grid-line);
+  --shadow-key: rgba(28, 22, 58, .28);
+  --sheen-blend: normal;
+  --spot-blend: normal;
+  --blur: 20px; --sat: 1.35; --brt: 1;
+  --text-glow: none;
+  --halo: rgba(74, 58, 242, .10);
+  --flash: radial-gradient(circle, rgba(16, 163, 122, .26), transparent 68%);
+  --key-top: #ffffff; --key-bot: #f2f1fa; --key-edge: rgba(40, 32, 78, .16);
+  --cell-bg: rgba(255, 255, 255, .96);
+  --cell-peer: #f2f1fb;
+  --cell-same: rgba(74, 58, 242, .09);
+  --cell-sel: rgba(74, 58, 242, .14);
+  --cell-bad: rgba(212, 58, 85, .10);
+  --box-bg: rgba(255, 255, 255, .6);
+  --cand: #9d96b5;
+}
+
+/* ---------- 纸面背景：细网格 + 单一光源，不要彩虹光斑 ---------- */
+.stage-bg { position: fixed; inset: 0; z-index: 0; background: var(--bg-deep); overflow: hidden; }
+.mesh {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(115% 85% at 50% 0%, #000 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(115% 85% at 50% 0%, #000 20%, transparent 80%);
+}
+/* 保留旧类名但改为极淡的一层暖光（不再是三团彩色） */
+.blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .5; }
+.blob-a { width: 68vw; height: 68vw; left: -18vw; top: -26vw; background: radial-gradient(circle, rgba(74, 58, 242, .16) 0%, transparent 68%); }
+.blob-b { width: 60vw; height: 60vw; right: -16vw; top: 8vh; background: radial-gradient(circle, rgba(46, 201, 192, .13) 0%, transparent 68%); }
+.blob-c { width: 72vw; height: 48vw; left: 8vw; bottom: -22vw; background: radial-gradient(circle, rgba(240, 163, 42, .10) 0%, transparent 70%); }
+.spot {
+  position: absolute; width: 300px; height: 300px; border-radius: 50%;
+  left: var(--sx, 50%); top: var(--sy, 30%); transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, .9) 0%, rgba(255, 255, 255, 0) 66%);
+  pointer-events: none; transition: left .5s cubic-bezier(.22, .8, .28, 1), top .5s cubic-bezier(.22, .8, .28, 1);
+}
+.vignette { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, .6) 0%, transparent 45%, rgba(28, 22, 58, .06) 100%); pointer-events: none; }
+
+/* ---------- 瓷面（毛玻璃降级为「薄瓷」：白底 + 极轻模糊） ---------- */
+.glass {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  border: 1px solid var(--hair);
+}
+.glass::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .7) 0%, rgba(255, 255, 255, 0) 34%);
+}
+[data-theme="contrast"] .glass, .no-glass .glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: #fff; }
+.no-glass .glass::before { display: none; }
+.perf-lite .blob { display: none; }
+.perf-lite .glass { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.perf-lite .board-halo, .perf-lite .btn-glow, .perf-lite .key-ring { display: none; }
+
+/* 光影强度档位 */
+[data-light="off"] .spot, [data-light="off"] .board-sheen, [data-light="off"] .board-halo, [data-light="off"] .blob { display: none; }
+[data-light="flat"] .spot, [data-light="flat"] .board-sheen, [data-light="flat"] .board-halo { display: none; }
+[data-light="flat"] { --blur: 8px; }
+[data-light="rich"] { --blur: 28px; }
+[data-light="rich"] .spot { width: 420px; height: 420px; }
+
+/* ---------- 描边图标体系（取代 emoji） ---------- */
+.ic {
+  width: 1.15em; height: 1.15em; flex: 0 0 auto; display: inline-block;
+  stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; fill: none;
+  vertical-align: -.18em;
+}
+.ic.big { width: 20px; height: 20px; }
+.ic.sm { width: 13px; height: 13px; stroke-width: 1.9; }
+.tool .ic { width: 19px; height: 19px; }
+.tab .ic { width: 21px; height: 21px; }
+.icon-btn .ic { width: 17px; height: 17px; }
+.brand-mark .ic { width: 15px; height: 15px; }
+.strip-ico .ic { width: 17px; height: 17px; }
+
+/* ---------- 主题：夜瓷（暗色，仍保持单色强调） ---------- */
+[data-theme="midnight"] {
+  --ink: #eef0fb; --ink-2: #b6bcd8; --ink-3: #8b93b6; --ink-4: #6b7396;
+  --paper: #0d1020; --paper-2: #12162a; --bg-deep: #0d1020;
+  --surface: rgba(22, 27, 50, .92); --surface-2: rgba(18, 22, 44, .82); --surface-3: rgba(18, 22, 44, .6);
+  --hair: rgba(160, 178, 255, .14); --hair-2: rgba(160, 178, 255, .22); --grid-line: rgba(160, 178, 255, .05);
+  --accent: #8b7bff; --accent-2: #a99cff; --accent-3: #35d0c4;
+  --accent-ink: #b9aeff; --accent-soft: rgba(139, 123, 255, .16); --accent-line: rgba(139, 123, 255, .34); --accent-glow: rgba(139, 123, 255, .3);
+  --cell-bg: rgba(16, 20, 40, .82); --cell-peer: rgba(34, 41, 74, .7); --cell-same: rgba(139, 123, 255, .16);
+  --cell-sel: rgba(139, 123, 255, .26); --cell-bad: rgba(255, 92, 120, .18); --box-bg: rgba(30, 37, 68, .5);
+  --cand: #7f88b2; --key-top: rgba(34, 41, 76, .96); --key-bot: rgba(20, 25, 48, .96); --key-edge: rgba(0, 0, 0, .5);
+  --halo: rgba(139, 123, 255, .18); --grabber: rgba(160, 178, 255, .26);
+  --scrim: rgba(4, 6, 16, .62); --scrim-strong: rgba(13, 16, 32, .86);
+  --node-done: rgba(16, 163, 122, .2); --good: #2ad3a4; --good-ink: #6fe3c2; --tip-ink: #43ded4;
+  --sh-1: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 26px -18px rgba(0, 0, 0, .7);
+  --sh-2: 0 1px 2px rgba(0, 0, 0, .28), 0 6px 16px -12px rgba(0, 0, 0, .6);
+  --sh-3: 0 2px 4px rgba(0, 0, 0, .3), 0 22px 48px -26px rgba(0, 0, 0, .8);
+  --sh-4: 0 -22px 52px -26px rgba(0, 0, 0, .8);
+  --inner-top: inset 0 1px 0 rgba(190, 205, 255, .1);
+  --inner-hair: inset 0 0 0 1px rgba(160, 178, 255, .1);
+}
+[data-theme="midnight"] .glass::before { background: linear-gradient(180deg, rgba(190, 205, 255, .12) 0%, transparent 36%); }
+[data-theme="midnight"] .blob-a { background: radial-gradient(circle, rgba(139, 123, 255, .3) 0%, transparent 68%); }
+[data-theme="midnight"] .blob-b { background: radial-gradient(circle, rgba(53, 208, 196, .18) 0%, transparent 68%); }
+[data-theme="midnight"] .spot { background: radial-gradient(circle, rgba(180, 195, 255, .18) 0%, transparent 66%); }
+[data-theme="midnight"] .vignette { background: radial-gradient(120% 80% at 50% 0%, rgba(160, 180, 255, .07) 0%, transparent 45%, rgba(0, 0, 0, .45) 100%); }
+
+/* ---------- 主题：雾青 / 暖砂 / 高对比 ---------- */
+[data-theme="mist"] { --accent: #0f7f8c; --accent-2: #35a7ae; --accent-3: #4ecdc4; --accent-ink: #0b6470; --accent-soft: rgba(15, 127, 140, .09); --accent-line: rgba(15, 127, 140, .28); --accent-glow: rgba(15, 127, 140, .28); --paper: #f1f6f6; --bg-deep: #f1f6f6; --tier-ink: #0b6470; }
+[data-theme="sand"] { --accent: #b45309; --accent-2: #d97706; --accent-3: #e0a458; --accent-ink: #8f4207; --accent-soft: rgba(180, 83, 9, .09); --accent-line: rgba(180, 83, 9, .28); --accent-glow: rgba(180, 83, 9, .26); --paper: #f8f4ee; --bg-deep: #f8f4ee; --tier-ink: #8f4207; }
+[data-theme="contrast"] {
+  --paper: #fff; --bg-deep: #fff; --ink: #000; --ink-2: #1f1f28; --ink-3: #4a4a56; --ink-4: #6c6c7a;
+  --surface: #fff; --surface-2: #fff; --surface-3: #fff; --hair: rgba(0, 0, 0, .42); --hair-2: rgba(0, 0, 0, .55); --grid-line: transparent;
+  --accent: #1414c8; --accent-ink: #1414c8; --accent-soft: rgba(20, 20, 200, .1); --accent-line: rgba(0, 0, 0, .5); --accent-glow: transparent;
+  --cell-bg: #fff; --cell-peer: #eeeeF6; --cell-same: #e4e4ff; --cell-sel: #d6d6ff; --box-bg: #fff;
+  --sh-1: none; --sh-2: none; --sh-3: none; --sh-4: none; --inner-top: none; --halo: transparent;
+}
+[data-theme="contrast"] .blob, [data-theme="contrast"] .spot, [data-theme="contrast"] .board-halo, [data-theme="contrast"] .board-sheen { display: none; }
+[data-theme="contrast"] .glass { border-width: 1.5px; }

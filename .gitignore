@@ -1,0 +1,4 @@
+# 验证产生的截图与日志（本地跑闸门时重新生成）
+tools/look/
+tools/look-desktop/
+tools/out-*.txt
