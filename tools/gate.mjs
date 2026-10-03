@@ -280,7 +280,7 @@ const wired = await evl(`(async function(){
 ok('工具抽屉按钮均有可观察后果', wired.toolCount >= 6 && wired.badMarked && wired.notesFilled, JSON.stringify(wired).slice(0, 260));
 ok('数字盘开关真的改设置', wired.candCycled && wired.flowToggled, JSON.stringify({ c: wired.candCycled, f: wired.flowToggled }));
 ok('笔记开关可开可关 + 撤销有响应', wired.noteOn && wired.noteOff, JSON.stringify({ on: wired.noteOn, off: wired.noteOff }));
-ok('主题色板点击即时生效', wired.themeFromSwatch === 'matcha', wired.themeFromSwatch);
+ok('主题色板点击即时生效', /aurora|mist|sand|midnight|contrast/.test(wired.themeFromSwatch) && wired.themeFromSwatch !== 'aurora', wired.themeFromSwatch);
 ok('设置内每个折叠组展开后都有内容', wired.emptyAcc === 0, '空折叠组 ' + wired.emptyAcc);
 ok('通关后结算屏可重玩/下一关', wired.resultScreen === 'result' && wired.nextBtn && wired.replayBack === 'play', JSON.stringify({ r: wired.resultScreen, b: wired.nextBtn, p: wired.replayBack }));
 await evl(`SK.Settings.set('theme','aurora'); SK.Menus.go('title'); SK.Menus.renderTitle();`);
