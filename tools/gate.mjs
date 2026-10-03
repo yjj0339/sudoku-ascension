@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const PAGE = 'file:///D:/Qoder%20AI/sudoku-ascension/index.html';
+const PAGE = process.env.PAGE || 'file:///D:/Qoder%20AI/sudoku-ascension/index.html';
 const PORT = +(process.env.PORT || 9471);
 const OUT = join(process.cwd(), 'tools', 'look');
 mkdirSync(OUT, { recursive: true });

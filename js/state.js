@@ -38,7 +38,7 @@
     document.body.classList.toggle('no-glass', Settings.blur !== 'on');
     document.body.classList.toggle('lite', !Settings.digitGlow);
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', { aurora: '#eef0fb', matcha: '#eaf4ea', peach: '#fdefe6', midnight: '#0b1024', contrast: '#ffffff' }[Settings.theme] || '#eef0fb');
+    if (meta) meta.setAttribute('content', { aurora: '#f5f4fa', mist: '#f1f6f6', sand: '#f8f4ee', midnight: '#0d1020', contrast: '#ffffff' }[Settings.theme] || '#eef0fb');
   };
 
   /* ---------- 进度 ---------- */

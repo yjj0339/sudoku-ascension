@@ -561,13 +561,13 @@
     const body = U.$('#settings-body');
     body.innerHTML = '';
     const themes = [
-      { v: 'aurora', t: '极光', css: 'linear-gradient(140deg,#ffd9ef,#cfe4ff 55%,#d9f7ee)' },
-      { v: 'matcha', t: '抹茶', css: 'linear-gradient(140deg,#d7f5c9,#e6f7d2 55%,#cfeaf4)' },
-      { v: 'peach', t: '蜜桃', css: 'linear-gradient(140deg,#ffd9c0,#ffd0e0 55%,#ffe9b8)' },
-      { v: 'midnight', t: '深夜', css: 'linear-gradient(140deg,#2a2f5c,#0b1024 60%,#123a4a)' },
-      { v: 'contrast', t: '高对比', css: 'linear-gradient(140deg,#fff,#e9ebf5 55%,#fff)' },
+      { v: 'aurora', t: '瓷白', css: 'linear-gradient(140deg,#ffffff,#eceaf9 55%,#f5f4fa)' },
+      { v: 'mist', t: '雾青', css: 'linear-gradient(140deg,#f1f6f6,#dcece9 55%,#eef4f6)' },
+      { v: 'sand', t: '暖砂', css: 'linear-gradient(140deg,#f8f4ee,#f0e3d2 55%,#f8f4ee)' },
+      { v: 'midnight', t: '夜瓷', css: 'linear-gradient(140deg,#1b2140,#0d1020 60%,#14243c)' },
+      { v: 'contrast', t: '高对比', css: 'linear-gradient(140deg,#fff,#fff 55%,#e9ebf5)' },
     ];
-    body.appendChild(acc('视觉 · 主题', '毛玻璃配色与光影强度', inner => {
+    body.appendChild(acc('视觉 · 主题', '配色与光影强度', inner => {
       inner.appendChild(M.swatches(themes, SK.Settings.theme, v => { SK.Settings.set('theme', v); U.toast({ title: '主题已切换', text: themes.find(t => t.v === v).t }); }));
       const l = el('div', 'row'); l.innerHTML = '<div><b>光影层次</b><small>光斑、高光与投影</small></div>';
       l.appendChild(M.seg([{ v: 'off', t: '关' }, { v: 'flat', t: '简' }, { v: 'soft', t: '柔' }, { v: 'rich', t: '华' }], SK.Settings.light, v => SK.Settings.set('light', v)));
